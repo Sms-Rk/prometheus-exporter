@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  exporter:
+    image: docker-hub.tip.co.ir/targoman/nvidia-exporter:latest
+    labels:
+      com.example.description: "Prometheus Exproter Container"
+    ports:
+      - "9000:9000"
+    container_name: nvidia-exporter
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
