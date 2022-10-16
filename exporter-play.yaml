@@ -1,0 +1,17 @@
+---
+
+- name: Run nvidia sm exporter on machines
+  gather_facts: false
+  hosts: all
+  tasks:
+    - name: Copy compose file from host to target
+      ansible.builtin.copy:
+      	src: ./exporter-compose.yaml
+      	dest: /home/exporter-compose.yaml
+
+    - name: Run the docker compose file
+      community.docker.docker_compose:
+        project_src: /home
+        state: present
+	      files:
+    	  - exporter-compose.yml
