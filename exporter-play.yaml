@@ -1,17 +1,43 @@
 ---
 
-- name: Run nvidia sm exporter on machines
+- name: Run gpu exporters on machines
+  become: true
   gather_facts: false
-  hosts: all
+  hosts: localhost
   tasks:
+
+    - name: Copy sm exporter image tar file from host to servers
+      ansible.builtin.copy:
+        src: /tmp/sm-exporter.tar
+        dest: /home/sm-exporter.tar
+
+    - name: Copy gpu exporter image tar file from host to servers
+      ansible.builtin.copy:
+        src: /tmp/gpu-exporter.tar
+        dest: /home/gpu-exporter.tar
+
+    - name: Load sm image from archive
+      docker_image:
+        name: docker.tip.co.ir/targoman/nvidia-exporter:latest
+        load_path: /home/sm-exporter.tar
+        source: load
+        state: present
+
+    - name: Load gpu image from archive
+      docker_image:
+        name: docker.tip.co.ir/targoman/gpu-exporter:latest
+        load_path: /home/gpu-exporter.tar
+        source: load
+        state: present
+
     - name: Copy compose file from host to target
       ansible.builtin.copy:
-      	src: ./exporter-compose.yaml
-      	dest: /home/exporter-compose.yaml
+        src: ./exporter-compose.yaml
+        dest: /home/exporter-compose.yaml
 
     - name: Run the docker compose file
       community.docker.docker_compose:
         project_src: /home
         state: present
-	      files:
-    	  - exporter-compose.yml
+        files:
+        - exporter-compose.yml
