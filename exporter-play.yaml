@@ -34,6 +34,12 @@
       ansible.builtin.copy:
         src: ./exporter-compose.yaml
         dest: /home/exporter-compose.yaml
+        
+    - name: Install docker-compose from official github repo
+      get_url:
+        url : https://github.com/docker/compose/releases/download/2.12.0/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
 
     - name: Run the docker compose file
       community.docker.docker_compose:
