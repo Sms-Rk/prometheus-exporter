@@ -130,3 +130,5 @@ dmypy.json
 # docker images
 *.tar
 
+# binaries
+docker-compose-linux-x86_64
