@@ -7,7 +7,7 @@ services:
       com.example.description: "Prometheus SM Exproter Container"
     ports:
       - "9000:9000"
-    container_name: sm-exporter-exporter
+    container_name: sm-exporter
     deploy:
       restart_policy:
         condition: on-failure
@@ -41,3 +41,15 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    ports:
+      - 9100:9100
+    pull_policy: missing
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'

@@ -1,6 +1,5 @@
 - name: gpu monitoring
   hosts: nodes
-  gather_facts: yes
 
   tasks:
     - name: run gpu exporter

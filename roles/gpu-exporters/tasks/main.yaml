@@ -1,42 +1,54 @@
 ---
-- name: Copy sm exporter image tar file from host to servers
-  ansible.builtin.copy:
-    src: /tmp/sm-exporter.tar
-    dest: /home/sm-exporter.tar
+#- name: Copy sm exporter image tar file from host to servers
+#  ansible.builtin.copy:
+#    src: "{{ src_path }}sm-exporter.tar"
+#    dest: "{{ src_path }}sm-exporter.tar"
+#
+#- name: Copy gpu exporter image tar file from host to servers
+#  ansible.builtin.copy:
+#    src: "{{ src_path }}gpu-exporter.tar"
+#    dest: "{{ dest_path }}gpu-exporter.tar"
 
-- name: Copy gpu exporter image tar file from host to servers
+- name: Copy node exporter image tar file from host to servers
   ansible.builtin.copy:
-    src: /tmp/gpu-exporter.tar
-    dest: /home/gpu-exporter.tar
+    src: "{{ src_path }}node-exporter.tar"
+    dest: "{{ dest_path }}node-exporter.tar"
 
 - name: Load sm image from archive
   docker_image:
     name: docker-hub.tip.co.ir/targoman/nvidia-exporter:latest
-    load_path: /home/sm-exporter.tar
+    load_path: "{{ dest_path }}sm-exporter.tar"
     source: load
     state: present
 
 - name: Load gpu image from archive
   docker_image:
     name: docker.tip.co.ir/targoman/gpu-exporter:latest
-    load_path: /home/gpu-exporter.tar
+    load_path: "{{ dest_path }}gpu-exporter.tar"
+    source: load
+    state: present
+
+- name: Load node image from archive
+  docker_image:
+    name: quay.io/prometheus/node-exporter:latest
+    load_path: "{{ dest_path }}node-exporter.tar"
     source: load
     state: present
 
 - name: Copy compose file from host to target
   ansible.builtin.copy:
-    src: ./exporter-compose.yaml
-    dest: /home/exporter-compose.yaml
+    src: ../files/exporter-compose.yaml
+    dest: "{{ dest_path }}exporter-compose.yaml"
 
 - name: Install docker-compose from official github repo
   ansible.builtin.copy:
     src: ../files/docker-compose-linux-x86_64
-    dest: /home/docker-compose
-+
+    dest: "{{ dest_path }}docker-compose"
+
 - name: give compose binary execute permission
   ansible.builtin.file:
-    dest: /home/docker-compose
+    dest: "{{ dest_path }}docker-compose"
     mode: 'a+x'
 
 - name: Run the docker compose file
-  shell: /home/docker-compose -f /home/exporter-compose.yaml up -d
+  shell: /home/sadegh/docker-compose -f /home/sadegh/exporter-compose.yaml up -d
