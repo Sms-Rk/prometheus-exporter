@@ -1,9 +1,15 @@
 ---
+- name: Check if Docker Compose binary already exists
+  stat:
+    path: "{{ docker_compose_dest_file }}"
+  register: compose_file
+
 - name: Download Docker Compose binary
   get_url:
-    url: "{{ docker_compose_url }}"
-    dest: "{{ docker_compose_install_path }}"
+    url: "{{ docker_compose_download_url }}"
+    dest: "{{ docker_compose_dest_file }}"
     mode: '0755'
+  when: not compose_file.stat.exists
 
 - name: Verify Docker Compose installation
   shell: "docker-compose --version"
