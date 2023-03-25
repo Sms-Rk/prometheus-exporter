@@ -1,0 +1,23 @@
+---
+- name: Install Docker if not present
+  become: true
+  apt:
+    name: docker.io
+    state: present
+
+- name: Pull latest Node Exporter image
+  become: true
+  docker_image:
+    name: prom/node-exporter
+    tag: latest
+
+- name: Create Node Exporter container
+  become: true
+  docker_container:
+    name: node-exporter
+    image: prom/node-exporter
+    restart_policy: always
+    network_mode: host
+    state: started
+    published_ports:
+      - "9100:9100"
