@@ -12,7 +12,7 @@ class GpuSmCollector(object):
 
         # Prometheus metrics to collect
 
-        self.sm = GaugeMetricFamily('my_gauge_sm', 'Help text', labels=['pid'])
+        self.sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['pid'])
 
 
     def run_metrics_loop(self):
