@@ -1,0 +1,16 @@
+---
+- name: Download Docker Compose binary
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: "{{ docker_compose_install_path }}"
+    mode: '0755'
+
+- name: Verify Docker Compose installation
+  shell: "docker-compose --version"
+  register: docker_compose_version_output
+  changed_when: false
+  failed_when: docker_compose_version_output.rc not in [0, 1]
+
+- name: Print Docker Compose version
+  debug:
+    msg: "Installed Docker Compose version is {{ docker_compose_version_output.stdout }}."
