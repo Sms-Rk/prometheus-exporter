@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  node-exporter:
+    container_name: node-exporter
+    image: prom/node-exporter:v1.2.2
+    restart: always
+    network_mode: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /etc/localtime:/etc/localtime:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    security_opt:
+      - no-new-privileges
+    user: "root"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:9100/metrics || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
