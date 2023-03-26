@@ -2,6 +2,11 @@
   hosts: nodes
 
   tasks:
+
+    - name: run compose installation
+      import_role:
+        name: install-compose
+
     - name: run gpu exporter
       import_role:
         name: gpu-exporters
