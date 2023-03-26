@@ -1,13 +1,15 @@
 version: "3.9"
 services:
   sm-exporter:
-    image: docker-hub.tip.co.ir/targoman/nvidia-exporter:latest
-    pull_policy: missing
+    image: registry.example.com/targoman/nvidia-exporter:v1.0.0
+    pull_policy: if-not-present
     labels:
-      com.example.description: "Prometheus SM Exproter Container"
+      com.example.description: "Prometheus SM Exporter Container"
     ports:
       - "9000:9000"
     container_name: sm-exporter
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
     deploy:
       restart_policy:
         condition: on-failure
@@ -18,20 +20,24 @@ services:
               capabilities: [gpu]
 
   gpu-exporter:
-    image: docker.tip.co.ir/targoman/gpu-exporter:latest
-    pull_policy: missing
+    image: registry.example.com/targoman/gpu-exporter:v1.0.0
+    pull_policy: if-not-present
     labels:
       com.example.description: "Prometheus GPU Exporter Container"
     ports:
       - "9835:9835"
     volumes:
-      - "/usr/lib64/libnvidia-ml.so:/usr/lib64/libnvidia-ml.so"
-      - "/usr/lib64/libnvidia-ml.so.1:/usr/lib64/libnvidia-ml.so.1"
-      - "/usr/bin/nvidia-smi:/usr/bin/nvidia-smi"
-    devices:
-      - "/dev/nvidiactl:/dev/nvidiactl"
-      - "/dev/nvidia0:/dev/nvidia0"
-      - "/dev/nvidia1:/dev/nvidia1"
+      - gpu-exporter-data:/data
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_REQUIRE_CUDA=cuda>=10.1
+    secrets:
+      - gpu-exporter-secrets
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9835/metrics"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     container_name: gpu-exporter
     deploy:
       restart_policy:
@@ -41,3 +47,8 @@ services:
           devices:
             - driver: nvidia
               capabilities: [gpu]
+secrets:
+  gpu-exporter-secrets:
+    external: true
+volumes:
+  gpu-exporter-data:
