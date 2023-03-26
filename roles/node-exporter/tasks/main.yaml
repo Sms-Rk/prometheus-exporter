@@ -1,23 +1,17 @@
 ---
-- name: Install Docker if not present
+- name: Install Docker Compose
   become: true
   apt:
-    name: docker.io
+    name: docker-compose
     state: present
 
-- name: Pull latest Node Exporter image
-  become: true
-  docker_image:
-    name: prom/node-exporter
-    tag: latest
+- name: Copy Docker Compose file
+  copy:
+    src: ../files/docker-compose.yaml
+    dest: /opt/node-exporter/docker-compose.yml
 
-- name: Create Node Exporter container
+- name: Start Node Exporter
   become: true
-  docker_container:
-    name: node-exporter
-    image: prom/node-exporter
-    restart_policy: always
-    network_mode: host
-    state: started
-    published_ports:
-      - "9100:9100"
+  command: docker-compose up -d
+  args:
+    chdir: /opt/node-exporter
