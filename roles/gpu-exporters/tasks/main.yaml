@@ -1,19 +1,4 @@
 ---
-#- name: Copy sm exporter image tar file from host to servers
-#  ansible.builtin.copy:
-#    src: "{{ src_path }}sm-exporter.tar"
-#    dest: "{{ src_path }}sm-exporter.tar"
-#
-#- name: Copy gpu exporter image tar file from host to servers
-#  ansible.builtin.copy:
-#    src: "{{ src_path }}gpu-exporter.tar"
-#    dest: "{{ dest_path }}gpu-exporter.tar"
-
-- name: Copy node exporter image tar file from host to servers
-  ansible.builtin.copy:
-    src: "{{ src_path }}node-exporter.tar"
-    dest: "{{ dest_path }}node-exporter.tar"
-
 - name: Load sm image from archive
   docker_image:
     name: docker-hub.tip.co.ir/targoman/nvidia-exporter:latest
@@ -25,13 +10,6 @@
   docker_image:
     name: docker.tip.co.ir/targoman/gpu-exporter:latest
     load_path: "{{ dest_path }}gpu-exporter.tar"
-    source: load
-    state: present
-
-- name: Load node image from archive
-  docker_image:
-    name: quay.io/prometheus/node-exporter:latest
-    load_path: "{{ dest_path }}node-exporter.tar"
     source: load
     state: present
 
