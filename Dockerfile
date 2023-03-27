@@ -26,11 +26,11 @@ RUN pip install prometheus-client
 ENV LC_ALL=C.UTF-8
 RUN update-locale LC_ALL="C.UTF-8"
 
-COPY nvitop-sm-exporter.py requierments.txt ./
+COPY gpu-sm-exporter.py requierments.txt ./
 RUN pip3 install -r requierments.txt
 RUN pip install nvitop
 
-EXPOSE 9000
+EXPOSE 9001
 
 # Entrypoint
-ENTRYPOINT [ "python3","nvitop-sm-exporter.py" ]
+ENTRYPOINT [ "python3","gpu-sm-exporter.py" ]
