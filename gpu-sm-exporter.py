@@ -32,7 +32,7 @@ class GpuSmCollector(object):
                     #processes.sort(key=lambda process: (process.username, process.pid))
                     for snapshot in processes:
                         pid = str(snapshot.pid)
-                        sm.add_metric("gpu#="+str(device.index)+"pid#="+pid], snapshot.gpu_sm_utilization)
+                        sm.add_metric("gpu#="+str(device.bus_id())+"pid#="+pid], snapshot.gpu_sm_utilization)
                 else:
                     print(colored('  - No Running Processes', attrs=('bold',)))
             return [sm]
