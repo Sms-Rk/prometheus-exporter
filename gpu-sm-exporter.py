@@ -12,7 +12,7 @@ class GpuSmCollector(object):
 
         # Prometheus metrics to collect
 
-        self.sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['pid'])
+#        self.sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['pid'])
 
 
     def run_metrics_loop(self):
@@ -20,11 +20,10 @@ class GpuSmCollector(object):
 
         while True:
             self.collect()
-#            print("testttttt")
             time.sleep(self.polling_interval_seconds)
 
     def collect(self):
-#            gauge = GaugeMetricFamily('my_gauge_sm', 'Help text', labels=['pid'])
+            sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['process'])
             devices = Device.all()
             for device in devices:
                 processes = device.processes()
@@ -33,11 +32,10 @@ class GpuSmCollector(object):
                     #processes.sort(key=lambda process: (process.username, process.pid))
                     for snapshot in processes:
                         pid = str(snapshot.pid)
-                        self.sm.add_metric([pid], snapshot.gpu_sm_utilization)
-#                        print(snapshot.command)
+                        sm.add_metric("gpu#="+str(device.index)+"pid#="+pid], snapshot.gpu_sm_utilization)
                 else:
                     print(colored('  - No Running Processes', attrs=('bold',)))
-            return [self.sm]
+            return [sm]
 
 
 def main():
