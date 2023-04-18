@@ -1,11 +1,11 @@
 ---
 - name: Copy Docker Compose file
   copy:
-    src: ../files/docker-compose.yaml
-    dest: /opt/node-exporter/docker-compose.yml
+    src: "{{../files/docker-compose.yaml}}"
+    dest: "{{docker_compose_directory_path}}docker-compose.yml"
 
 - name: Start Node Exporter
   become: true
-  command: docker-compose up -d
+  command: docker-compose -f "{{docker_compose_directory_path}}" up -d
   args:
-    chdir: /opt/node-exporter
+    chdir: "{{docker_compose_directory_path}}"
