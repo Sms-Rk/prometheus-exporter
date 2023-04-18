@@ -1,0 +1,5 @@
+---
+# defaults vars for cadvisor_docker_compose
+
+docker_compose_file_path: "../files/docker-compose.yaml"
+docker_compose_directory_path: "/opt/node-exporter/"
