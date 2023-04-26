@@ -1,15 +1,17 @@
 ---
-- name: Check if Docker Compose binary already exists
+- name: Check if Docker Compose already Installed
   stat:
-    path: "{{ docker_compose_dest_file }}"
-  register: compose_file
+    path: "{{ docker_compose_install_dir }}"
+  register: docker_compose_installed
+
 
 - name: Download Docker Compose binary
   get_url:
     url: "{{ docker_compose_download_url }}"
-    dest: "{{ docker_compose_dest_file }}"
-    mode: '0755'
-  when: not compose_file.stat.exists
+    dest: "{{ docker_compose_install_dir }}"
+    mode: 'a+x'
+  when: not docker_compose_installed.stat.exists
+
 
 - name: Verify Docker Compose installation
   shell: "docker-compose --version"
@@ -20,3 +22,8 @@
 - name: Print Docker Compose version
   debug:
     msg: "Installed Docker Compose version is {{ docker_compose_version_output.stdout }}."
+
+- name: Print a message if Docker Compose is already installed
+  debug:
+    msg: "Docker Compose is already installed"
+  when: docker_compose_installed.stat.exists
