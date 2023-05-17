@@ -23,7 +23,7 @@ class GpuSmCollector(object):
             time.sleep(self.polling_interval_seconds)
 
     def collect(self):
-            sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['process'])
+            sm = GaugeMetricFamily('gpu_process', 'Help text', labels=['bus_id','pid'])
             devices = Device.all()
             for device in devices:
                 processes = device.processes()
@@ -32,7 +32,8 @@ class GpuSmCollector(object):
                     #processes.sort(key=lambda process: (process.username, process.pid))
                     for snapshot in processes:
                         pid = str(snapshot.pid)
-                        sm.add_metric(["gpu#="+str(device.bus_id())+"pid#="+pid], snapshot.gpu_sm_utilization)
+                        bus_id = str(device.bus_id())
+                        sm.add_metric([bus_id,pid], snapshot.gpu_sm_utilization)
                 else:
                     print(colored('  - No Running Processes', attrs=('bold',)))
             return [sm]
